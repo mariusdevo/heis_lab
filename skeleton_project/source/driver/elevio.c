@@ -15,7 +15,7 @@ static pthread_mutex_t sockmtx;
 void elevio_init(void){
     char ip[16] = "localhost";
     char port[8] = "15657";
-    con_load("elevio.con",
+    con_load("source/driver/elevio.con",
         con_val("com_ip",   ip,   "%s")
         con_val("com_port", port, "%s")
     )
