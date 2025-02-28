@@ -31,6 +31,7 @@ void elevator_init(Elevator* elev);
 void elevator_take_order(Elevator* elev);
 void elevator_expedite_order(Elevator* elev);
 void update_elevator(Elevator* elev);
+void something(Elevator *elev);
 
 
 

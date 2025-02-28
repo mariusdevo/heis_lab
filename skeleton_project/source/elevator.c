@@ -38,18 +38,20 @@ void elevator_run(Elevator *elev) {
                 break;
 
             case WAITING:
-                open_and_close_door(elev);
+                //open_and_close_door(elev);
                 elevator_expedite_order(elev);
                 
                 break;
 
             case MOVING:
-                int floor = elevio_floorSensor();
-                if (reqArray[floor] == 1) {
-                    elev->direction = DIRN_STOP;
-                    elev->floor = floor;
-                    reqArray[floor] = 0;
-                }
+                printf("HELLO\n");
+                something(elev);
+            //int floor = elevio_floorSensor();
+            //if (reqArray[floor] == 1) {
+              //  elev->direction = DIRN_STOP;
+                //elev->floor = floor;
+                //reqArray[floor] = 0;
+            //}
                 break;
         }
     }
@@ -74,25 +76,26 @@ void elevator_take_order(Elevator *elev) {
 }
 
 void elevator_expedite_order(Elevator* elev) {
-    int move_to_floor = 4;
+    int move_to_floor = -1;  // Start med en "ugyldig" etasje
     for (int i = 0; i < N_FLOORS; i++) {
-        if (i != elev->floor) {
-            if (reqArray[i] == 1) {
-                if (abs(i-elev->floor) < abs(move_to_floor-elev->floor)) {
-                    move_to_floor = i;
-                }
+        if (reqArray[i] == 1 && i != elev->floor) {  // Sjekk om etasjen er bestilt og ikke er nåværende etasje
+            if (move_to_floor == -1 || abs(i - elev->floor) < abs(move_to_floor - elev->floor)) {
+                move_to_floor = i;  // Velg den nærmeste bestilte etasjen
             }
         }
     }
-    if (move_to_floor != 4) {
+
+    // Etter å ha valgt etasje, sett retningen:
+    if (move_to_floor != -1) {
         if (move_to_floor > elev->floor) {
-            elev->direction = DIRN_UP;
+            elev->direction = DIRN_UP;  // Beveg oppover
         } else {
-            elev->direction = DIRN_DOWN;
+            elev->direction = DIRN_DOWN;  // Beveg nedover
         }
     } else {
-        elev->direction = DIRN_STOP;
+        elev->direction = DIRN_STOP;  // Stopp heisen hvis ingen etasje er valgt
     }
+
 }
 
 void update_elevator(Elevator* elev) {
@@ -109,6 +112,15 @@ void update_elevator(Elevator* elev) {
         elev->current_state = MOVING;
     }*/
     
+}
+
+void something(Elevator *elev) {
+    int floor = elevio_floorSensor();
+    if (reqArray[floor] == 1) {
+        elev->direction = DIRN_STOP;
+        elev->floor = floor;
+        reqArray[floor] = 0;
+    }
 }
 
 
