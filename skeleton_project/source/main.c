@@ -10,6 +10,7 @@
 int main(){
     Elevator elevator;
     elevator_init(elevator);
+    //testing1
 
     return 0;
 }
