@@ -8,9 +8,12 @@
 
 
 int main(){
-    Elevator elevator;
-    elevator_init(elevator);
-    //testing1
+    //Elevator elevator;
+    //elevator_init(elevator);
+    ArrayStruct list;
+    setElement(list, 0, 1);
+    setElement(list, 1, 4);
+    fprint("first element:", getElement(list,0), "  Second element: ", getElement(list,1), "  size of array: ", list.size);
 
     return 0;
 }
