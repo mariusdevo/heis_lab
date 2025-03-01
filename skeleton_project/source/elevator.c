@@ -44,14 +44,8 @@ void elevator_run(Elevator *elev) {
                 break;
 
             case MOVING:
-                printf("HELLO\n");
-                something(elev);
-            //int floor = elevio_floorSensor();
-            //if (reqArray[floor] == 1) {
-              //  elev->direction = DIRN_STOP;
-                //elev->floor = floor;
-                //reqArray[floor] = 0;
-            //}
+                //printf("HELLO\n");
+                check_for_stop(elev);
                 break;
         }
     }
@@ -68,7 +62,7 @@ void elevator_take_order(Elevator *elev) {
             button_pressed = b;
             if (button_active == 1) {
                 reqArray[floor_requested] = 1;
-                printf("%d %d %d %d\n", reqArray[0], reqArray[1], reqArray[2], reqArray[3]);
+                //printf("%d %d %d %d\n", reqArray[0], reqArray[1], reqArray[2], reqArray[3]);
             }
             elevio_buttonLamp(f, b, button_active);
         }
@@ -114,7 +108,7 @@ void update_elevator(Elevator* elev) {
     
 }
 
-void something(Elevator *elev) {
+void check_for_stop(Elevator *elev) {
     int floor = elevio_floorSensor();
     if (reqArray[floor] == 1) {
         elev->direction = DIRN_STOP;
@@ -130,21 +124,19 @@ bool is_empty() {
     for (int i = 0; i < N_FLOORS; i++) {
         if (reqArray[i] == 1) {
             return false;
-        } else {
-            return true;
         }
     }
+    return true;
 }
 
 //door functions:
 void open_and_close_door(Elevator *elev) {
-    time_t start, end;
-    start = time(NULL);  // Get current time in seconds
-    end = start;
-
-    while (difftime(end, start) < 3) {
-        end = time(NULL);  // Get current time in seconds again
-        elevator_take_order(elev);
+    time_t actual = time(NULL);
+    time_t duration = 3;
+    time_t endwait = actual + duration ;
+    printf("Hey");
+    while(actual < endwait){
+        actual = time(NULL);
     }
-    printf("HELLO\n");
+    printf("Hey");
 }
