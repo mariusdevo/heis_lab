@@ -99,7 +99,7 @@ void elevator_expedite_order(Elevator* elev) {
 
 void check_for_stop(Elevator *elev) {
     int floor = elevio_floorSensor();
-    if (reqArray[floor] == 1) {
+    if (floor != -1 && reqArray[floor] == 1) {
         elev->direction = DIRN_STOP;
         elev->floor = floor;
         reqArray[floor] = 0;
