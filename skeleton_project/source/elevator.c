@@ -1,8 +1,5 @@
 #include "elevator.h"
 
-//create global array for queue with zero requests
-int reqArray[4] = {0,0,0,0};
-
 void elevator_init(Elevator *elev) {
     elevio_init();
     elevio_motorDirection(DIRN_DOWN);
@@ -66,7 +63,7 @@ void elevator_take_order(Elevator *elev) {
             floor_requested = f;
             button_pressed = b;
             if (button_active == 1) {
-                reqArray[floor_requested] = 1;
+                elev->reqArray[floor_requested] = 1;
                 //printf("%d %d %d %d\n", reqArray[0], reqArray[1], reqArray[2], reqArray[3]);
             }
             elevio_buttonLamp(f, b, button_active);
@@ -77,7 +74,7 @@ void elevator_take_order(Elevator *elev) {
 void elevator_expedite_order(Elevator* elev) {
     int move_to_floor = -1;  // Start med en "ugyldig" etasje
     for (int i = 0; i < N_FLOORS; i++) {
-        if (reqArray[i] == 1 && i != elev->floor) {  // Sjekk om etasjen er bestilt og ikke er nåværende etasje
+        if (elev->reqArray[i] == 1 && i != elev->floor) {  // Sjekk om etasjen er bestilt og ikke er nåværende etasje
             if (move_to_floor == -1 || abs(i - elev->floor) < abs(move_to_floor - elev->floor)) {
                 move_to_floor = i;  // Velg den nærmeste bestilte etasjen
             }
@@ -99,19 +96,19 @@ void elevator_expedite_order(Elevator* elev) {
 
 void check_for_stop(Elevator *elev) {
     int floor = elevio_floorSensor();
-    if (floor != -1 && reqArray[floor] == 1) {
+    if (floor != -1 && elev->reqArray[floor] == 1) {
         elev->direction = DIRN_STOP;
         elev->floor = floor;
-        reqArray[floor] = 0;
+        elev->reqArray[floor] = 0;
     }
 }
 
 
 
 //req_list functions:
-bool is_empty() {
+bool is_empty(Elevator* elev) {
     for (int i = 0; i < N_FLOORS; i++) {
-        if (reqArray[i] == 1) {
+        if (elev->reqArray[i] == 1) {
             return false;
         }
     }

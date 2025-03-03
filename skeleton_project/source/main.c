@@ -6,7 +6,7 @@
 #include "elevator.h"
 
 int main(){
-    Elevator elevator;
+    Elevator elevator = {{0,0,0,0}};
     elevator_init(&elevator);
     elevator_run(&elevator);
 

@@ -19,6 +19,7 @@ typedef enum {
 } DoorStates;
 
 typedef struct {
+    int reqArray[4];
     States current_state;
     MotorDirection direction;
     DoorStates door_state;
@@ -33,7 +34,7 @@ void elevator_expedite_order(Elevator* elev);
 void check_for_stop(Elevator *elev);
 
 //req_list functions:
-bool is_empty();
+bool is_empty(Elevator* elev);
 
 
 //door functions
