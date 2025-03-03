@@ -24,8 +24,12 @@ void elevator_run(Elevator *elev) {
 
     while(1) {
         elevator_take_order(elev);
-        update_elevator(elev);
-
+        elevio_motorDirection(elev->direction);
+        if (elev->direction == DIRN_STOP) {
+            elev->current_state = WAITING;
+        } else {
+            elev->current_state = MOVING;
+        }
 
         States cs = elev->current_state;
         switch (cs) {
@@ -48,6 +52,7 @@ void elevator_run(Elevator *elev) {
                 check_for_stop(elev);
                 break;
         }
+        nanosleep(&(struct timespec){0, 20*1000*1000}, NULL);
     }
 }
 
@@ -90,22 +95,6 @@ void elevator_expedite_order(Elevator* elev) {
         elev->direction = DIRN_STOP;  // Stopp heisen hvis ingen etasje er valgt
     }
 
-}
-
-void update_elevator(Elevator* elev) {
-    elevio_motorDirection(elev->direction);
-    if (elev->direction == DIRN_STOP) {
-        elev->current_state = WAITING;
-    } else {
-        elev->current_state = MOVING;
-    }
-
-    /*if (is_empty() == true) {
-        elev->current_state = WAITING;
-    } else {
-        elev->current_state = MOVING;
-    }*/
-    
 }
 
 void check_for_stop(Elevator *elev) {
