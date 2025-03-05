@@ -22,37 +22,36 @@ void elevator_run(Elevator *elev) {
     while(1) {
         elevator_take_order(elev);
         elevio_motorDirection(elev->direction);
+
         if (elev->direction == DIRN_STOP) {
             elev->current_state = WAITING;
-        } else {
-            elev->current_state = MOVING;
-        }
-
+            } else {
+                elev->current_state = MOVING;
+                }
+        
         States cs = elev->current_state;
         switch (cs) {
             case UNDEFINED:
-
-                break;
-
+            
+            break;
+            
             case IDLE:
-
-                break;
-
+            
+            break;
+            
             case WAITING:
-                //open_and_close_door(elev);
+                open_and_close_door(elev);
                 elevator_expedite_order(elev);
-                
                 break;
-
+                
             case MOVING:
                 //printf("HELLO\n");
                 check_for_stop(elev);
                 break;
+            }
         }
-        //nanosleep(&(struct timespec){0, 20*1000*1000}, NULL);
     }
-}
-
+    
 void elevator_take_order(Elevator *elev) {
     int button_active;
     int floor_requested;
@@ -65,8 +64,8 @@ void elevator_take_order(Elevator *elev) {
             if (button_active == 1) {
                 elev->reqArray[floor_requested] = 1;
                 //printf("%d %d %d %d\n", reqArray[0], reqArray[1], reqArray[2], reqArray[3]);
+                elevio_buttonLamp(f, b, button_active);
             }
-            elevio_buttonLamp(f, b, button_active);
         }
     }
 }
@@ -120,9 +119,8 @@ void open_and_close_door(Elevator *elev) {
     time_t actual = time(NULL);
     time_t duration = 3;
     time_t endwait = actual + duration ;
-    printf("Hey");
     while(actual < endwait){
         actual = time(NULL);
+        elevator_take_order(elev);
     }
-    printf("Hey");
 }
