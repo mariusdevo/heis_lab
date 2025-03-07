@@ -120,7 +120,7 @@ void elevator_take_order(Elevator *elev) {
                 elev->reqArray[floor_requested] = 1;
                 elevio_buttonLamp(f, b, button_active);
 
-            } else if (button_active == 1 && floor_requested != elev->floor) {
+            } else if (button_active == 1) {
                 elev->reqArray[floor_requested] = 1;
                 elevio_buttonLamp(f, b, button_active);
             }
@@ -202,13 +202,15 @@ void open_and_close_door(Elevator *elev) {
     time_t duration = 3;
     time_t endwait = actual + duration;
     while(actual < endwait){
+        actual = time(NULL);
         elevator_take_order(elev);
         while (elevio_obstruction()) {
+            actual = time(NULL);
             elevator_take_order(elev);
             endwait = actual + duration;
         }
-        actual = time(NULL);
     }
+
     elev->door_state = CLOSED;
     elevio_doorOpenLamp(0);
 }
@@ -228,6 +230,11 @@ void stopButton_open_door(Elevator *elev) {
             elevio_stopLamp(1);
         } else {
             elevio_stopLamp(0);
+        }
+
+        while (elevio_obstruction()) {
+            actual = time(NULL);
+            endwait = actual + duration;
         }
     }
     elev->door_state = CLOSED;
