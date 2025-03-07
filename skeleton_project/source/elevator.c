@@ -40,9 +40,9 @@ void elevator_run(Elevator *elev) {
 
         if (elev->direction == DIRN_STOP) {
             elev->current_state = WAITING;
-            } else {
-                elev->current_state = MOVING;
-                }
+        } else {
+            elev->current_state = MOVING;
+        }
         if (elevio_stopButton() == 1) {
             elev->current_state = IDLE;
         }
@@ -55,9 +55,9 @@ void elevator_run(Elevator *elev) {
             break;
             
             case IDLE:
+                elevio_stopLamp(1);
                 //stoppknappen er trykket, så vi stopper heisen
                 floor = elevio_floorSensor();
-                printf("%d\n", floor);
                 elev->direction = DIRN_STOP;
                 elevio_motorDirection(DIRN_STOP);
 
@@ -82,8 +82,10 @@ void elevator_run(Elevator *elev) {
                         stopButton_open_door(elev);
                     }
                 }
+                elev->previous_state = elev->current_state;
                 elev->current_state = WAITING;
                 elev->floor = -1;
+                elevio_stopLamp(0);
                 break;
             
             case WAITING:
@@ -198,10 +200,14 @@ void open_and_close_door(Elevator *elev) {
     elevio_doorOpenLamp(1);
     time_t actual = time(NULL);
     time_t duration = 3;
-    time_t endwait = actual + duration ;
+    time_t endwait = actual + duration;
     while(actual < endwait){
-        actual = time(NULL);
         elevator_take_order(elev);
+        while (elevio_obstruction()) {
+            elevator_take_order(elev);
+            endwait = actual + duration;
+        }
+        actual = time(NULL);
     }
     elev->door_state = CLOSED;
     elevio_doorOpenLamp(0);
@@ -215,9 +221,13 @@ void stopButton_open_door(Elevator *elev) {
     time_t duration = 3;
     time_t endwait = actual + duration ;
     while(actual < endwait){
+
         actual = time(NULL);
         if (elevio_stopButton() == 1) {
             endwait = actual + duration;
+            elevio_stopLamp(1);
+        } else {
+            elevio_stopLamp(0);
         }
     }
     elev->door_state = CLOSED;
