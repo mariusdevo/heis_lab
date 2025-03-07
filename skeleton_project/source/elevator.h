@@ -3,8 +3,6 @@
 #include "stdbool.h"
 #include "driver/elevio.h"
 
-extern int reqArray[];
-
 typedef enum {
     UNDEFINED = -1,
     IDLE = 0,
@@ -21,9 +19,9 @@ typedef enum {
 typedef struct {
     int reqArray[4];
     States current_state;
+    States previous_state;
     MotorDirection direction;
     DoorStates door_state;
-    //int waiting_to_close_door; 1 for waiting, 0 for not waiting
     int floor;
 } Elevator;
 

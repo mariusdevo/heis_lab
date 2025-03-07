@@ -15,6 +15,7 @@ void elevator_init(Elevator *elev) {
     elev->direction = DIRN_STOP;
     elev->door_state = CLOSED;
     elev->floor = 0;
+    elev->previous_state = IDLE;
 }
 
 void elevator_run(Elevator *elev) {
@@ -40,13 +41,17 @@ void elevator_run(Elevator *elev) {
             break;
             
             case WAITING:
-                open_and_close_door(elev);
+                if (elev->previous_state != WAITING) {
+                    open_and_close_door(elev);
+                    elev->previous_state = elev->current_state;
+                }
                 elevator_expedite_order(elev);
+            
                 break;
                 
             case MOVING:
-                //printf("HELLO\n");
                 check_for_stop(elev);
+                elev->previous_state = elev->current_state;
                 break;
             }
         }
@@ -61,7 +66,7 @@ void elevator_take_order(Elevator *elev) {
             button_active = elevio_callButton(f, b);
             floor_requested = f;
             button_pressed = b;
-            if (button_active == 1) {
+            if (button_active == 1 && floor_requested != elev->floor) {
                 elev->reqArray[floor_requested] = 1;
                 //printf("%d %d %d %d\n", reqArray[0], reqArray[1], reqArray[2], reqArray[3]);
                 elevio_buttonLamp(f, b, button_active);
