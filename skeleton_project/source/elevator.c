@@ -3,6 +3,11 @@
 void elevator_init(Elevator *elev) {
     elevio_init();
     elevio_motorDirection(DIRN_DOWN);
+    for(int f = 0; f < N_FLOORS; f++){
+        for(int b = 0; b < N_BUTTONS; b++){
+            elevio_buttonLamp(f, b, 0);
+        }
+    }
 
     while(1){
         int floor = elevio_floorSensor();
@@ -101,9 +106,13 @@ void elevator_expedite_order(Elevator* elev) {
 void check_for_stop(Elevator *elev) {
     int floor = elevio_floorSensor();
     if (floor != -1 && elev->reqArray[floor] == 1) {
+        elevio_floorIndicator(floor); //only when elevator has stopped do the indicator lamp need to switch
         elev->direction = DIRN_STOP;
         elev->floor = floor;
         elev->reqArray[floor] = 0;
+        elevio_buttonLamp(floor, 0, 0);
+        elevio_buttonLamp(floor, 1, 0);
+        elevio_buttonLamp(floor, 2, 0);
     }
 }
 
@@ -121,6 +130,8 @@ bool is_empty(Elevator* elev) {
 
 //door functions:
 void open_and_close_door(Elevator *elev) {
+    elev->door_state = OPEN;
+    elevio_doorOpenLamp(1);
     time_t actual = time(NULL);
     time_t duration = 3;
     time_t endwait = actual + duration ;
@@ -128,4 +139,6 @@ void open_and_close_door(Elevator *elev) {
         actual = time(NULL);
         elevator_take_order(elev);
     }
+    elev->door_state = CLOSED;
+    elevio_doorOpenLamp(0);
 }
