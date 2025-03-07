@@ -23,6 +23,7 @@ typedef struct {
     MotorDirection direction;
     DoorStates door_state;
     int floor;
+    int prev_reg_floor;
 } Elevator;
 
 void elevator_run(Elevator* elev);
@@ -37,5 +38,8 @@ bool is_empty(Elevator* elev);
 
 //door functions
 void open_and_close_door(Elevator *elev);
+
+//stopButton
+void stopButton_open_door(Elevator *elev);
 
 
