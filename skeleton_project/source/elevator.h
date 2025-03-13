@@ -2,6 +2,7 @@
 #include "time.h"
 #include "stdbool.h"
 #include "driver/elevio.h"
+#include "stdlib.h"
 
 typedef enum {
     UNDEFINED = -1,
